@@ -1,0 +1,17 @@
+[package]
+name = "otel-span-bill"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+authors = ["PEPAI <pep_ai@icloud.com>"]
+license = "MIT OR Apache-2.0"
+description = "Show OpenTelemetry span volume per service from OTLP-JSON files, with estimated Datadog APM and Grafana Cloud Traces cost."
+repository = "https://github.com/qwpp7g79y4-maker/otel-span-bill"
+readme = "README.md"
+keywords = ["opentelemetry", "otlp", "tracing", "cost", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = [".github/", ".gitattributes"]
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+serde_json = "1"

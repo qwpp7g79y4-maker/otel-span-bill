@@ -1,0 +1,16 @@
+{"resourceSpans":[{"resource":{"attributes":[{"key":"service.name","value":{"stringValue":"golden"}}]},"scopeSpans":[{"spans":[{
+"traceId":"000102030405060708090a0b0c0d0e0f","spanId":"0001020304050607","parentSpanId":"08090a0b0c0d0e0f","traceState":"k=v",
+"name":"GET /orders/{id}","kind":"SPAN_KIND_SERVER","startTimeUnixNano":"1700000000000000000","endTimeUnixNano":"1700000000500000000",
+"droppedAttributesCount":2,"droppedEventsCount":1,"droppedLinksCount":3,"flags":256,
+"attributes":[
+{"key":"http.method","value":{"stringValue":"GET"}},
+{"key":"http.status_code","value":{"intValue":"200"}},
+{"key":"retry","value":{"intValue":"-1"}},
+{"key":"ok","value":{"boolValue":true}},
+{"key":"ratio","value":{"doubleValue":0.5}},
+{"key":"blob","value":{"bytesValue":"YWJjZGVm"}},
+{"key":"list","value":{"arrayValue":{"values":[{"stringValue":"x"},{"intValue":"300"}]}}},
+{"key":"map","value":{"kvlistValue":{"values":[{"key":"i","value":{"stringValue":"j"}}]}}}],
+"events":[{"timeUnixNano":"1700000000100000000","name":"exception","attributes":[{"key":"exception.message","value":{"stringValue":"boom"}}],"droppedAttributesCount":1}],
+"links":[{"traceId":"000102030405060708090a0b0c0d0e0f","spanId":"0001020304050607","traceState":"a=b","attributes":[{"key":"n","value":{"intValue":"1"}}],"droppedAttributesCount":4,"flags":1}],
+"status":{"message":"boom","code":"STATUS_CODE_ERROR"}}]}]}]}

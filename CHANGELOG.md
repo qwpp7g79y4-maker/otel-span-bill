@@ -1,0 +1,15 @@
+# Changelog
+
+All notable changes to this project are documented in this file.
+
+## [0.1.0] - 2026-11-09
+
+First release.
+
+### Added
+
+- `otel-span-bill PATH...` reads OTLP-JSON trace files (one document, JSON lines, or several documents one after the other) and directories (one level deep: `.json`, `.jsonl`, `.ndjson`), and shows spans, traces, and an estimated OTLP protobuf size per service.
+- Estimated monthly cost at Datadog APM (hosts, ingested GB above the allotment, indexed spans above the allotment) and Grafana Cloud Traces Pro (platform fee, processing, write), from list prices read on 2026-11-09. The sources and the date are in the README and in every report.
+- Options `--json`, `--top N`, `--scale N`, `--apm-hosts N`, `--indexed-percent P`.
+- The size estimate is checked against a real protobuf encoder (`tests/size_golden.rs`).
+- Offline: reads files only and has no network client.
