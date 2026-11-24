@@ -6,7 +6,7 @@ This page shows how otel-span-bill was checked. It describes checks we did. It i
 
 | | |
 |---|---|
-| Tested commit | `c205d3167551e79004cbe19fd8314c097b9acff9` (first commit of the 2026-11-24 review-repair round; the documents on top of it are the only later change) |
+| Tested commit | `04ca47690ee893bb9b67b3f2c261bf981615c62c` (first commit of the repair of review B-1 and B-2 on 2026-11-24; the documents on top of it are the only later change) |
 | Tests | 155 automated tests (0 failed) |
 
 ### What is tested
@@ -42,6 +42,29 @@ Run from the repository root on 2026-11-09, Linux, Rust 1.99 stable unless noted
 - The estimates were not compared with a real Datadog or Grafana invoice. The vendor pages do not say which byte count they bill.
 - Only Linux was used. The claim "exit 2 without a panic" for a failed stdout and a full or closed stderr is tested on Unix only: those four tests use `/dev/full` or `sh` and have `cfg(unix)`. On Windows they are not compiled, so that claim is not tested there. No GitHub Actions run has happened.
 
+## Run on 2026-11-24 (review B-1 and B-2)
+
+Repair of findings B-1 and B-2 of the final review `otel-eind-6dc6ccb`. N1 to N7 stay open. Built-in prices unchanged. Nothing was pushed, no tag, no GitHub Actions run.
+
+Change (tests only, `04ca47690ee893bb9b67b3f2c261bf981615c62c`): `the_tool_makes_no_network_connection` reads the dependencies in both forms, the `[dependencies]` table and the `[dependencies.NAME]` tables that `cargo package` writes (B-1); `readme_price_table_matches_the_constants` parses the six rows of the README price table and compares price, included amount and source of each row with the constants (B-2).
+
+Red on `6dc6ccb` (a `git archive` copy of that commit, packaged with `cargo package --allow-dirty --offline --no-verify`, unpacked):
+
+```
+cargo test --locked --test cli the_tool_makes
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 49 filtered out
+```
+
+B-2 on `6dc6ccb`: with `$1.70 per million` changed to `$1.80` and the Grafana write rate to `$0.45` in the table (and both old amounts left elsewhere in the README), `cargo test --locked --test readme` stays `10 passed; 0 failed`. With the new test and the same changed README: `9 passed; 1 failed` (`readme_price_table_matches_the_constants`).
+
+Green on the tip `04ca47690ee893bb9b67b3f2c261bf981615c62c`: `cargo test --locked --no-fail-fast -j 2` in the source tree and in the unpacked `.crate` of that commit, `cargo fmt --check` (exit 0) and `cargo clippy --all-targets --locked -- -D warnings` (exit 0), Linux. The documents commit on top changes only documents.
+
+Result: 155 passed, 0 failed (90 unit tests, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doc-tests), in both trees.
+
+Not run: `cargo test --release`, `cargo +1.85 test`, `cargo deny`, `cargo audit`, a GitHub Actions run.
+
+STAND: groen
+
 ## Run on 2026-11-24 (review F1 and F2)
 
 Repair of findings F1 and F2 of the final review `otel-eind-4b7719b`. F3, F4, F5 and the rest stay open. Built-in prices unchanged. Nothing was pushed, no tag.
@@ -57,7 +80,7 @@ test result: FAILED. 1 passed; 3 failed; 0 ignored; 0 measured; 46 filtered out
 
 F1 cannot be shown red on Linux: `cfg(unix)` only changes what Windows and macOS compile, and neither was run.
 
-Green on the tip: `cargo test --locked --no-fail-fast -j 2`, `cargo fmt --check` (exit 0) and `cargo clippy --all-targets --locked -- -D warnings` (exit 0), Linux, on the tree of the documents commit directly on top of `c205d3167551e79004cbe19fd8314c097b9acff9`. That commit changes only documents.
+Green on the tip: `cargo test --locked --no-fail-fast -j 2`, `cargo fmt --check` (exit 0) and `cargo clippy --all-targets --locked -- -D warnings` (exit 0), Linux, on the tree of the documents commit directly on top of `04ca47690ee893bb9b67b3f2c261bf981615c62c`. That commit changes only documents.
 
 Result: 155 passed, 0 failed (90 unit tests, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doc-tests).
 
