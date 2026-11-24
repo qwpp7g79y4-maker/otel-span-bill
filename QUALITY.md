@@ -6,7 +6,7 @@ This page shows how otel-span-bill was checked. It describes checks we did. It i
 
 | | |
 |---|---|
-| Tested commit | `04ca47690ee893bb9b67b3f2c261bf981615c62c` (first commit of the repair of review B-1 and B-2 on 2026-11-24; the documents on top of it are the only later change) |
+| Tested commit | `342708bb8a1ce9bcfc069eff1b86e19fcc2511f4` (first commit of the repair of review B-1 of `otel-eind-47cab85` on 2026-11-24; the documents on top of it are the only later change) |
 | Tests | 155 automated tests (0 failed) |
 
 ### What is tested
@@ -41,6 +41,29 @@ Run from the repository root on 2026-11-09, Linux, Rust 1.99 stable unless noted
 - No fuzzing and no property tests in 0.1.0.
 - The estimates were not compared with a real Datadog or Grafana invoice. The vendor pages do not say which byte count they bill.
 - Only Linux was used. The claim "exit 2 without a panic" for a failed stdout and a full or closed stderr is tested on Unix only: those four tests use `/dev/full` or `sh` and have `cfg(unix)`. On Windows they are not compiled, so that claim is not tested there. No GitHub Actions run has happened.
+
+## Run on 2026-11-24 (review B-1 of otel-eind-47cab85)
+
+Repair of finding B-1 of the final review `otel-eind-47cab85`: five tests in `tests/readme.rs` failed when `README.md` had CRLF line endings, because they search for `"\n## "`. N-a to N-f stay open. Built-in prices unchanged. Nothing was pushed, no tag. The GitHub run has still not been executed.
+
+Change (`342708bb8a1ce9bcfc069eff1b86e19fcc2511f4`): `.gitattributes` with `* text=auto eol=lf`, and the test reader `read()` in `tests/readme.rs` turns `\r\n` into `\n`, so the five tests stay green when the file has CRLF anyway. `Cargo.toml` still excludes `.gitattributes` from the package.
+
+Red on `47cab85` (a `git archive` copy with `README.md` converted to CRLF by `sed -i 's/$/\r/'`):
+
+```
+cargo test --locked --offline --test readme
+test result: FAILED. 5 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out
+```
+
+The five that fail: `readme_has_the_required_sections`, `every_claim_in_how_it_counts_and_limitations_names_its_tests`, `quick_start_examples_match_the_real_output`, `readme_install_command_uses_the_crate_name`, `readme_price_table_matches_the_constants`.
+
+Green on the new tip `342708bb8a1ce9bcfc069eff1b86e19fcc2511f4` with the same CRLF `README.md`: `test result: ok. 10 passed; 0 failed`. Also green on the tree itself: `cargo test --locked --no-fail-fast -j 2`, `cargo fmt --check` and `cargo clippy --all-targets --locked -- -D warnings`, Linux. The documents commit on top changes only documents.
+
+Result: 155 passed, 0 failed (90 unit tests, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doc-tests).
+
+Not run: Windows, `cargo test --release`, `cargo +1.85 test`, `cargo deny`, `cargo audit`, a GitHub Actions run.
+
+STAND: groen
 
 ## Run on 2026-11-24 (review B-1 and B-2)
 

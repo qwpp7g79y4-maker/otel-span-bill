@@ -7,7 +7,7 @@ Deze pagina laat zien hoe otel-span-bill is gecontroleerd. Ze beschrijft control
 
 | | |
 |---|---|
-| Geteste commit | `04ca47690ee893bb9b67b3f2c261bf981615c62c` (eerste commit van de reparatie van review B-1 en B-2 op 2026-11-24; de documenten daarbovenop zijn de enige latere wijziging) |
+| Geteste commit | `342708bb8a1ce9bcfc069eff1b86e19fcc2511f4` (eerste commit van de reparatie van review B-1 van `otel-eind-47cab85` op 2026-11-24; de documenten daarbovenop zijn de enige latere wijziging) |
 | Tests | 155 geautomatiseerde tests (0 mislukt) |
 
 ### Wat getest wordt
@@ -16,6 +16,22 @@ Deze pagina laat zien hoe otel-span-bill is gecontroleerd. Ze beschrijft control
 - 50 tests in `tests/cli.rs` die het programma draaien op de bestanden in `tests/fixtures` en op gegenereerde bestanden: afsluitcodes, opties, foutmeldingen, mappen, JSON-regels, een byte order mark, binaire invoer, een bestand van 20.000 spans, een mislukte schrijfactie op stdout, een volle of gesloten stderr, een gesloten lezer, paden met stuurtekens in foutmeldingen.
 - 5 tests in `tests/size_golden.rs`: de groottebepaling is gelijk aan het aantal bytes van een echte protobuf-encoder.
 - 10 tests in `tests/readme.rs`: elke opdracht in de Quick start van de README wordt uitgevoerd en de uitvoer vergeleken; de koppen, prijzen, URL's en datum in de README komen overeen met het programma; het aantal tests in README en op deze pagina komt overeen met de suite; licenties en changelog zijn aanwezig.
+
+### Meting van 2026-11-24 (review B-1 van otel-eind-47cab85)
+
+Reparatie van bevinding B-1 van de eindreview `otel-eind-47cab85`: vijf tests in `tests/readme.rs` faalden als `README.md` CRLF had, omdat ze op `"\n## "` zoeken. N-a tot en met N-f blijven open. Ingebouwde tarieven ongewijzigd. Niets gepusht, geen tag. De GitHub-run is nog steeds niet uitgevoerd.
+
+Wijziging (`342708bb8a1ce9bcfc069eff1b86e19fcc2511f4`): `.gitattributes` met `* text=auto eol=lf`, en de testlezer `read()` in `tests/readme.rs` zet `\r\n` om in `\n`, zodat de vijf tests groen blijven als het bestand toch CRLF heeft. `Cargo.toml` sluit `.gitattributes` nog steeds uit van het pakket.
+
+Rood op `47cab85` (een `git archive`-kopie met `README.md` omgezet naar CRLF): `cargo test --locked --offline --test readme` gaf `test result: FAILED. 5 passed; 5 failed`.
+
+Groen op de nieuwe tip `342708bb8a1ce9bcfc069eff1b86e19fcc2511f4` met dezelfde CRLF-`README.md`: `10 passed; 0 failed`. Ook groen op de boom zelf: `cargo test --locked --no-fail-fast -j 2`, `cargo fmt --check` en `cargo clippy --all-targets --locked -- -D warnings`, Linux. De documentencommit erboven wijzigt alleen documenten.
+
+Resultaat: 155 geslaagd, 0 mislukt (90 unittests, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doctests).
+
+Niet gedraaid: Windows, `cargo test --release`, `cargo +1.85 test`, `cargo deny`, `cargo audit`, een GitHub Actions-run.
+
+STAND: groen
 
 ### Meting van 2026-11-24 (review B-1 en B-2)
 

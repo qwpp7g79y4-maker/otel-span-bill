@@ -9,6 +9,8 @@ All notable changes to this project are documented in this file.
 - Paths in error messages are escaped, so a file name with a control character cannot add a line or a terminal escape to stderr.
 - The tests that need `/dev/full` or `sh` only run on Unix.
 
+- The README tests read the files with CRLF turned into LF, and `.gitattributes` keeps text files on LF, so a CRLF checkout (for example on Windows) no longer breaks five tests.
+
 ### Documentation
 
 - Added README.nl.md, QUALITY.nl.md, CONTRIBUTING.md and SECURITY.md.
