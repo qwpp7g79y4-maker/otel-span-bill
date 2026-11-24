@@ -57,10 +57,17 @@ fn readme_has_the_required_sections() {
     let r = read("README.md");
     for h in [
         "Why",
-        "Install",
+        "Installation",
         "Quick start",
+        "Aan de slag in 5 minuten",
+        "Options",
+        "Example",
         "How it counts",
+        "Exit codes",
         "Limitations",
+        "Maintenance",
+        "Prices and responsibility",
+        "License",
     ] {
         assert!(r.contains(&format!("\n## {h}\n")), "missing section {h}");
     }
@@ -183,7 +190,7 @@ fn readme_install_command_uses_the_crate_name() {
     let r = read("README.md");
     let cargo = read("Cargo.toml");
     assert!(cargo.contains("name = \"otel-span-bill\""));
-    assert!(section(&r, "Install").contains("cargo install --locked otel-span-bill"));
+    assert!(section(&r, "Installation").contains("cargo install --locked otel-span-bill"));
 }
 
 #[test]
