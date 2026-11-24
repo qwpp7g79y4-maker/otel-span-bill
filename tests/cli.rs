@@ -407,3 +407,82 @@ fn the_tool_makes_no_network_connection() {
         }
     }
 }
+
+fn bin() -> std::process::Command {
+    let mut c = std::process::Command::new(env!("CARGO_BIN_EXE_otel-span-bill"));
+    c.current_dir(env!("CARGO_MANIFEST_DIR"));
+    c
+}
+
+fn full() -> std::fs::File {
+    std::fs::OpenOptions::new()
+        .write(true)
+        .open("/dev/full")
+        .expect("/dev/full")
+}
+
+#[test]
+fn a_failed_write_to_stdout_exits_2() {
+    let o = bin()
+        .arg(BASIC)
+        .stdout(full())
+        .output()
+        .expect("binary runs");
+    assert_eq!(o.status.code(), Some(2));
+    let err = String::from_utf8_lossy(&o.stderr);
+    assert!(err.contains("stdout"), "{err}");
+    assert!(!err.contains("panicked"), "{err}");
+}
+
+#[test]
+fn a_failed_write_to_stdout_with_a_full_stderr_exits_2_without_panic() {
+    let o = bin()
+        .arg(BASIC)
+        .stdout(full())
+        .stderr(full())
+        .status()
+        .expect("binary runs");
+    assert_eq!(o.code(), Some(2));
+}
+
+#[test]
+fn a_closed_stdout_reader_stays_silent_and_exits_0() {
+    use std::process::Stdio;
+    let mut child = bin()
+        .arg("tests/fixtures/dir")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("binary runs");
+    drop(child.stdout.take());
+    let o = child.wait_with_output().expect("wait");
+    // The reader may close before or after the write; either way: no error.
+    assert_eq!(o.status.code(), Some(0));
+    assert!(
+        o.stderr.is_empty(),
+        "{}",
+        String::from_utf8_lossy(&o.stderr)
+    );
+}
+
+#[test]
+fn a_full_stderr_makes_an_error_exit_2_without_panic() {
+    let o = bin()
+        .arg("tests/fixtures/does-not-exist.json")
+        .stderr(full())
+        .output()
+        .expect("binary runs");
+    assert_eq!(o.status.code(), Some(2));
+}
+
+#[test]
+fn a_closed_stderr_makes_an_error_exit_2() {
+    let o = std::process::Command::new("sh")
+        .arg("-c")
+        .arg("exec \"$0\" tests/fixtures/does-not-exist.json 2>&-")
+        .arg(env!("CARGO_BIN_EXE_otel-span-bill"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .expect("sh runs");
+    assert_eq!(o.status.code(), Some(2));
+}
