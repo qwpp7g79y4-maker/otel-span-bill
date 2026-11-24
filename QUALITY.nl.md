@@ -7,13 +7,13 @@ Deze pagina laat zien hoe otel-span-bill is gecontroleerd. Ze beschrijft control
 
 | | |
 |---|---|
-| Geteste commit | `cf8c5d7d3713b2cabfad1270c984c909c1128946` (eerste commit van de reparatieronde van 2026-11-24; de documenten daarbovenop zijn de enige latere wijziging) |
-| Tests | 152 geautomatiseerde tests (0 mislukt) |
+| Geteste commit | `c205d3167551e79004cbe19fd8314c097b9acff9` (eerste commit van de reparatieronde van 2026-11-24; de documenten daarbovenop zijn de enige latere wijziging) |
+| Tests | 155 geautomatiseerde tests (0 mislukt) |
 
 ### Wat getest wordt
 
 - 90 unittests in `src/` (groottebepaling, tellen, invoer, kosten, weergave, prijzen).
-- 47 tests in `tests/cli.rs` die het programma draaien op de bestanden in `tests/fixtures` en op gegenereerde bestanden: afsluitcodes, opties, foutmeldingen, mappen, JSON-regels, een byte order mark, binaire invoer, een bestand van 20.000 spans, een mislukte schrijfactie op stdout, een volle of gesloten stderr, een gesloten lezer.
+- 50 tests in `tests/cli.rs` die het programma draaien op de bestanden in `tests/fixtures` en op gegenereerde bestanden: afsluitcodes, opties, foutmeldingen, mappen, JSON-regels, een byte order mark, binaire invoer, een bestand van 20.000 spans, een mislukte schrijfactie op stdout, een volle of gesloten stderr, een gesloten lezer, paden met stuurtekens in foutmeldingen.
 - 5 tests in `tests/size_golden.rs`: de groottebepaling is gelijk aan het aantal bytes van een echte protobuf-encoder.
 - 10 tests in `tests/readme.rs`: elke opdracht in de Quick start van de README wordt uitgevoerd en de uitvoer vergeleken; de koppen, prijzen, URL's en datum in de README komen overeen met het programma; het aantal tests in README en op deze pagina komt overeen met de suite; licenties en changelog zijn aanwezig.
 

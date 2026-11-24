@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Paths in error messages are escaped, so a file name with a control character cannot add a line or a terminal escape to stderr.
+- The tests that need `/dev/full` or `sh` only run on Unix.
+
 ### Documentation
 
 - Added README.nl.md, QUALITY.nl.md, CONTRIBUTING.md and SECURITY.md.

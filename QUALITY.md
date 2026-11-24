@@ -6,13 +6,13 @@ This page shows how otel-span-bill was checked. It describes checks we did. It i
 
 | | |
 |---|---|
-| Tested commit | `cf8c5d7d3713b2cabfad1270c984c909c1128946` (first commit of the 2026-11-24 repair round; the documents on top of it are the only later change) |
-| Tests | 152 automated tests (0 failed) |
+| Tested commit | `c205d3167551e79004cbe19fd8314c097b9acff9` (first commit of the 2026-11-24 review-repair round; the documents on top of it are the only later change) |
+| Tests | 155 automated tests (0 failed) |
 
 ### What is tested
 
 - 90 unit tests in `src/` (size estimate, counting, input, costs, rendering, prices).
-- 47 tests in `tests/cli.rs` that run the binary on the fixtures in `tests/fixtures` and on generated files: exit codes, options, error messages, directories, JSON lines, a byte order mark, binary input, a 20,000-span file, a failed write to stdout, a full or closed stderr, a closed reader.
+- 50 tests in `tests/cli.rs` that run the binary on the fixtures in `tests/fixtures` and on generated files: exit codes, options, error messages, directories, JSON lines, a byte order mark, binary input, a 20,000-span file, a failed write to stdout, a full or closed stderr, a closed reader, paths with control characters in error messages.
 - 5 tests in `tests/size_golden.rs`: the size estimate equals the byte count of a real protobuf encoder (Python `google.protobuf` 3.12 with the `opentelemetry.proto.trace.v1` message layout written out by hand) for a span with every kind of field, and for the resource and scope headers. This check found one bug while writing it: `Span.flags` is field 16 and needs a two-byte tag.
 - 10 tests in `tests/readme.rs`: every command in the README Quick start is run and its output compared; every claim in "How it counts" and "Limitations" names tests that exist; the prices, URLs and date in the README match the program; the test count in README and this page match the suite; licences and changelog are present.
 
@@ -40,7 +40,30 @@ Run from the repository root on 2026-11-09, Linux, Rust 1.99 stable unless noted
 
 - No fuzzing and no property tests in 0.1.0.
 - The estimates were not compared with a real Datadog or Grafana invoice. The vendor pages do not say which byte count they bill.
-- Only Linux was used.
+- Only Linux was used. The claim "exit 2 without a panic" for a failed stdout and a full or closed stderr is tested on Unix only: those four tests use `/dev/full` or `sh` and have `cfg(unix)`. On Windows they are not compiled, so that claim is not tested there. No GitHub Actions run has happened.
+
+## Run on 2026-11-24 (review F1 and F2)
+
+Repair of findings F1 and F2 of the final review `otel-eind-4b7719b`. F3, F4, F5 and the rest stay open. Built-in prices unchanged. Nothing was pushed, no tag.
+
+Change: `cfg(unix)` on `full()` and on the four tests that use `/dev/full` or `sh` (F1); every path in an error message goes through `escape_text` (F2), also for a directory and for a path that does not exist. 3 tests added in `tests/cli.rs` (a path with byte 1b and a line break: no raw escape, one line on stderr).
+
+Red on `4b7719b` (the 3 new tests with the old `src/`):
+
+```
+cargo test --locked -j 2 --test cli escape
+test result: FAILED. 1 passed; 3 failed; 0 ignored; 0 measured; 46 filtered out
+```
+
+F1 cannot be shown red on Linux: `cfg(unix)` only changes what Windows and macOS compile, and neither was run.
+
+Green on the tip: `cargo test --locked --no-fail-fast -j 2`, `cargo fmt --check` (exit 0) and `cargo clippy --all-targets --locked -- -D warnings` (exit 0), Linux, on the tree of the documents commit directly on top of `c205d3167551e79004cbe19fd8314c097b9acff9`. That commit changes only documents.
+
+Result: 155 passed, 0 failed (90 unit tests, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doc-tests).
+
+Not run: `cargo test --release`, `cargo +1.85 test`, `cargo deny`, `cargo audit`, a GitHub Actions run.
+
+STAND: groen
 
 ## Run on 2026-11-24 (repair round)
 

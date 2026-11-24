@@ -8,7 +8,7 @@ The tests and the measured numbers are in `QUALITY.md`.
 
 [Why](#why) • [Installation](#installation) • [Quick start](#quick-start) • [Aan de slag in 5 minuten](#aan-de-slag-in-5-minuten) • [Options](#options) • [Example](#example) • [How it counts](#how-it-counts) • [Exit codes](#exit-codes) • [Limitations](#limitations) • [Maintenance](#maintenance) • [Prices and responsibility](#prices-and-responsibility) • [License](#license)
 
-otel-span-bill is a command-line tool written in Rust. It reads OpenTelemetry trace data that was saved as OTLP-JSON (for example by the OpenTelemetry Collector `file` exporter), counts spans, traces, and an estimate of the data size per service, and estimates the monthly bill at Datadog APM and Grafana Cloud Traces. It reads files only and opens no network connection. 152 automated tests check it, see [QUALITY.md](QUALITY.md). A Dutch version is in [README.nl.md](README.nl.md).
+otel-span-bill is a command-line tool written in Rust. It reads OpenTelemetry trace data that was saved as OTLP-JSON (for example by the OpenTelemetry Collector `file` exporter), counts spans, traces, and an estimate of the data size per service, and estimates the monthly bill at Datadog APM and Grafana Cloud Traces. It reads files only and opens no network connection. 155 automated tests check it, see [QUALITY.md](QUALITY.md). A Dutch version is in [README.nl.md](README.nl.md).
 
 ## Why
 
@@ -167,6 +167,7 @@ The report lists `checkout` with 3 spans and 2 traces, then the line `... and 1 
 - Services are sorted by spans, biggest first, then by name. `--top N` shows only the first N rows and leaves the totals alone. [test: rows_sorted_by_spans_then_name, top_limits_the_rows_and_keeps_the_totals, top_zero_shows_no_rows]
 - Money is whole micro-dollars, and cents are rounded half up when shown. [test: rounds_half_up, usd_formatting, totals_do_not_overflow]
 - The text output escapes control characters in service names; the JSON output keeps the name as it is. [test: control_characters_in_a_service_name_are_escaped_in_text, json_output_keeps_the_service_name_exactly]
+- Paths in error messages are escaped the same way, so a file name cannot add a line or a terminal escape to stderr. [test: a_path_with_escape_and_newline_is_escaped_in_a_file_error, a_path_with_escape_and_newline_is_escaped_in_a_directory_error, a_path_with_escape_and_newline_is_escaped_in_a_missing_path_error]
 - A path that does not exist, invalid JSON, JSON that is not OTLP trace data, and a directory without trace files all exit with 2, name the file, and print nothing on stdout. [test: missing_path_exits_2_and_names_the_path, invalid_json_exits_2_with_file_and_position, json_that_is_not_otlp_traces_exits_2, directory_without_json_files_exits_2, a_good_file_and_a_bad_file_still_fail]
 - The same input always gives the same output. [test: output_is_identical_between_runs]
 - It makes no network connection: the only dependencies are `clap` and `serde_json`, and the sources use no socket or HTTP client. [test: the_tool_makes_no_network_connection]
