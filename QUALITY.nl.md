@@ -7,13 +7,13 @@ Deze pagina laat zien hoe otel-span-bill is gecontroleerd. Ze beschrijft control
 
 | | |
 |---|---|
-| Geteste commit | `9e53b1744f2476c8bc5b902a212d76bc49077bca` (eerste commit van de ronde van 2026-11-23; de documenten daarbovenop zijn de enige latere wijziging) |
-| Tests | 147 geautomatiseerde tests (0 mislukt) |
+| Geteste commit | `cf8c5d7d3713b2cabfad1270c984c909c1128946` (eerste commit van de reparatieronde van 2026-11-24; de documenten daarbovenop zijn de enige latere wijziging) |
+| Tests | 152 geautomatiseerde tests (0 mislukt) |
 
 ### Wat getest wordt
 
 - 90 unittests in `src/` (groottebepaling, tellen, invoer, kosten, weergave, prijzen).
-- 42 tests in `tests/cli.rs` die het programma draaien op de bestanden in `tests/fixtures` en op gegenereerde bestanden: afsluitcodes, opties, foutmeldingen, mappen, JSON-regels, een byte order mark, binaire invoer, een bestand van 20.000 spans.
+- 47 tests in `tests/cli.rs` die het programma draaien op de bestanden in `tests/fixtures` en op gegenereerde bestanden: afsluitcodes, opties, foutmeldingen, mappen, JSON-regels, een byte order mark, binaire invoer, een bestand van 20.000 spans, een mislukte schrijfactie op stdout, een volle of gesloten stderr, een gesloten lezer.
 - 5 tests in `tests/size_golden.rs`: de groottebepaling is gelijk aan het aantal bytes van een echte protobuf-encoder.
 - 10 tests in `tests/readme.rs`: elke opdracht in de Quick start van de README wordt uitgevoerd en de uitvoer vergeleken; de koppen, prijzen, URL's en datum in de README komen overeen met het programma; het aantal tests in README en op deze pagina komt overeen met de suite; licenties en changelog zijn aanwezig.
 
@@ -32,6 +32,16 @@ STAND: groen
 - `cargo publish --dry-run`
 - fuzzing, property tests en mutation testing
 - er is niets naar GitHub gestuurd
+
+### Meting van 2026-11-24 (reparatieronde)
+
+Opdracht: `cargo test --locked --no-fail-fast -j 2`, plus `cargo fmt --check` en `cargo clippy --all-targets --locked -- -D warnings`, vanuit de hoofdmap, Linux, op de boom van de documentencommit direct boven `cf8c5d7d3713b2cabfad1270c984c909c1128946`. Die commit wijzigt alleen documenten.
+
+Wijziging: een mislukte schrijfactie op stdout (behalve een gesloten lezer) geeft nu exit 2, en een volle of gesloten stderr geeft exit 2 zonder paniek (eerder: exit 0 en exit 101). 5 tests erbij in `tests/cli.rs`; op de oude `src/main.rs` zijn er 3 rood, de andere 2 bewaken gedrag dat al goed was.
+
+Resultaat: 152 geslaagd, 0 mislukt (90 unittests, 47 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doctests).
+
+STAND: groen
 
 ### Eerdere metingen
 

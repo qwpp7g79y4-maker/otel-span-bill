@@ -6,13 +6,13 @@ This page shows how otel-span-bill was checked. It describes checks we did. It i
 
 | | |
 |---|---|
-| Tested commit | `9e53b1744f2476c8bc5b902a212d76bc49077bca` (first commit of the 2026-11-23 round; the documents on top of it are the only later change) |
-| Tests | 147 automated tests (0 failed) |
+| Tested commit | `cf8c5d7d3713b2cabfad1270c984c909c1128946` (first commit of the 2026-11-24 repair round; the documents on top of it are the only later change) |
+| Tests | 152 automated tests (0 failed) |
 
 ### What is tested
 
 - 90 unit tests in `src/` (size estimate, counting, input, costs, rendering, prices).
-- 42 tests in `tests/cli.rs` that run the binary on the fixtures in `tests/fixtures` and on generated files: exit codes, options, error messages, directories, JSON lines, a byte order mark, binary input, a 20,000-span file.
+- 47 tests in `tests/cli.rs` that run the binary on the fixtures in `tests/fixtures` and on generated files: exit codes, options, error messages, directories, JSON lines, a byte order mark, binary input, a 20,000-span file, a failed write to stdout, a full or closed stderr, a closed reader.
 - 5 tests in `tests/size_golden.rs`: the size estimate equals the byte count of a real protobuf encoder (Python `google.protobuf` 3.12 with the `opentelemetry.proto.trace.v1` message layout written out by hand) for a span with every kind of field, and for the resource and scope headers. This check found one bug while writing it: `Span.flags` is field 16 and needs a two-byte tag.
 - 10 tests in `tests/readme.rs`: every command in the README Quick start is run and its output compared; every claim in "How it counts" and "Limitations" names tests that exist; the prices, URLs and date in the README match the program; the test count in README and this page match the suite; licences and changelog are present.
 
@@ -41,6 +41,16 @@ Run from the repository root on 2026-11-09, Linux, Rust 1.99 stable unless noted
 - No fuzzing and no property tests in 0.1.0.
 - The estimates were not compared with a real Datadog or Grafana invoice. The vendor pages do not say which byte count they bill.
 - Only Linux was used.
+
+## Run on 2026-11-24 (repair round)
+
+Command: `cargo test --locked --no-fail-fast -j 2`, plus `cargo fmt --check` and `cargo clippy --all-targets --locked -- -D warnings`, from the repository root, Linux, on the tree of the documents commit directly on top of `cf8c5d7d3713b2cabfad1270c984c909c1128946`. That commit changes only documents.
+
+Change: a failed write to stdout (anything except a closed reader) now exits 2, and a full or closed stderr exits 2 without a panic (before: exit 0, and exit 101). 5 tests added in `tests/cli.rs`; on the old `src/main.rs` 3 of them fail, the other 2 guard behaviour that was already right.
+
+Result: 152 passed, 0 failed (90 unit tests, 47 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doc-tests).
+
+STAND: groen
 
 ## What was not in the short note
 

@@ -5,7 +5,7 @@ Zie hoeveel spans elke service verstuurt en wat dat kost bij Datadog APM en Graf
 
 De tests en de gemeten aantallen staan in `QUALITY.nl.md`. De Engelse versie is [README.md](README.md).
 
-otel-span-bill is een opdrachtregelprogramma in Rust. Het leest OpenTelemetry-tracedata die als OTLP-JSON is opgeslagen, telt spans, traces en een schatting van de datagrootte per service, en schat de maandrekening bij Datadog APM en Grafana Cloud Traces. Het leest alleen bestanden en opent geen netwerkverbinding. 147 geautomatiseerde tests controleren het, zie [QUALITY.nl.md](QUALITY.nl.md).
+otel-span-bill is een opdrachtregelprogramma in Rust. Het leest OpenTelemetry-tracedata die als OTLP-JSON is opgeslagen, telt spans, traces en een schatting van de datagrootte per service, en schat de maandrekening bij Datadog APM en Grafana Cloud Traces. Het leest alleen bestanden en opent geen netwerkverbinding. 152 geautomatiseerde tests controleren het, zie [QUALITY.nl.md](QUALITY.nl.md).
 
 ## Installatie
 
@@ -48,8 +48,8 @@ Dit geeft de grootste service, `checkout` met 3 spans en 2 traces, de regel `...
 
 ## Afsluitcodes
 
-- `0`: het rapport is geschreven.
-- `2`: een fout: een pad dat niet te lezen is, ongeldige JSON, JSON die geen OTLP-tracedata is, een map zonder tracebestanden of een foute optie. De melding noemt het bestand en gaat naar stderr; op stdout komt niets.
+- `0`: het rapport is geschreven. Een lezer die de pipe eerder sloot (bijvoorbeeld `| head`) is geen fout en blijft stil.
+- `2`: een fout: een mislukte schrijfactie op stdout (behalve een gesloten lezer), een pad dat niet te lezen is, ongeldige JSON, JSON die geen OTLP-tracedata is, een map zonder tracebestanden of een foute optie. De melding noemt het bestand en gaat naar stderr; op stdout komt niets.
 
 ## Onderhoud
 
