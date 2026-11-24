@@ -6,7 +6,7 @@ This page shows how otel-span-bill was checked. It describes checks we did. It i
 
 | | |
 |---|---|
-| Checked tree | the 0.1.0 commit on branch `w4-W-96` |
+| Tested commit | `9e53b1744f2476c8bc5b902a212d76bc49077bca` (first commit of the 2026-11-23 round; the documents on top of it are the only later change) |
 | Tests | 147 automated tests (0 failed) |
 
 ### What is tested
@@ -48,9 +48,9 @@ This page records checks. It is not a guarantee and it is not a fuzz report.
 
 On 2026-11-18, on this machine, Linux, with cargo -j 2, these commands finished with exit 0: cargo fmt --all -- --check, cargo clippy --all-targets --locked -- -D warnings, cargo test --locked, and cargo test --release --locked. Debug and release passed the same tests. 0 failed.
 
-Not run that day: cargo deny, cargo audit, a GitHub Actions run, fuzzing, and mutation testing. The CI file lists deny and audit. Those jobs have not run on GitHub for this tree, because this tree is not pushed.
+Not run that day: cargo deny, cargo audit, a GitHub Actions run, fuzzing, and mutation testing. The CI file lists deny and audit. Those jobs have not run on GitHub for this tree: nothing was pushed.
 
-There is no Dutch README. task.md and blueprint.md belong in the repository when they exist. A gitignore line that hides them is a mistake.
+The Dutch pages are README.nl.md and QUALITY.nl.md. task.md and blueprint.md are local working files: they stay out of git and are listed in .gitignore.
 
 ## Run on 2026-11-23
 
@@ -66,3 +66,19 @@ STAND: groen
 - `cargo deny`, `cargo audit`, a GitHub Actions run
 - `cargo publish --dry-run`
 - fuzzing, property tests and mutation testing
+
+## Run on 2026-11-24
+
+Command: `cargo test --locked --no-fail-fast -j 2`, from the repository root, Linux, on the tree of the documents commit that sits directly on top of `9e53b17`. That commit changes only documents; all code and tests are the ones in `9e53b17`. The README tests read the README at run time, so they need those documents.
+
+Result: 147 passed, 0 failed (90 unit tests, 42 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doc-tests). The source code did not change in this round. The tests in `tests/readme.rs` now require the full list of README headings.
+
+STAND: groen
+
+### Not run in this round
+
+- `cargo fmt --check`, `cargo clippy`, `cargo test --release`, `cargo +1.85 test`
+- `cargo deny`, `cargo audit`, a GitHub Actions run, a release run
+- `cargo publish --dry-run`
+- fuzzing, property tests and mutation testing
+- nothing was pushed to GitHub

@@ -6,15 +6,15 @@ The tests and the measured numbers are in `QUALITY.md`.
 
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license) [![MSRV 1.85](https://img.shields.io/badge/MSRV-1.85-blue.svg)](Cargo.toml)
 
-[Why](#why) • [Install](#install) • [Quick start](#quick-start) • [How it counts](#how-it-counts) • [Limitations](#limitations) • [Prices](#prices)
+[Why](#why) • [Installation](#installation) • [Quick start](#quick-start) • [Aan de slag in 5 minuten](#aan-de-slag-in-5-minuten) • [Options](#options) • [Example](#example) • [How it counts](#how-it-counts) • [Exit codes](#exit-codes) • [Limitations](#limitations) • [Maintenance](#maintenance) • [Prices and responsibility](#prices-and-responsibility) • [License](#license)
 
-otel-span-bill is a command-line tool written in Rust. It reads OpenTelemetry trace data that was saved as OTLP-JSON (for example by the OpenTelemetry Collector `file` exporter), counts spans, traces, and an estimate of the data size per service, and estimates the monthly bill at Datadog APM and Grafana Cloud Traces. It reads files only and opens no network connection. 147 automated tests check it, see [QUALITY.md](QUALITY.md).
+otel-span-bill is a command-line tool written in Rust. It reads OpenTelemetry trace data that was saved as OTLP-JSON (for example by the OpenTelemetry Collector `file` exporter), counts spans, traces, and an estimate of the data size per service, and estimates the monthly bill at Datadog APM and Grafana Cloud Traces. It reads files only and opens no network connection. 147 automated tests check it, see [QUALITY.md](QUALITY.md). A Dutch version is in [README.nl.md](README.nl.md).
 
 ## Why
 
 Both vendors charge for trace volume (Datadog also per APM host). One chatty service can be most of the bill, and the invoice does not tell you which one. Saved trace files tell you before you send the data: which service produces the most spans, how large that data is, and what it would cost at the list prices.
 
-## Install
+## Installation
 
 Version 0.1.0. Rust 1.85 or newer is needed. From a checkout of this repository:
 
@@ -116,6 +116,40 @@ Prices read on 2026-11-09 from https://www.datadoghq.com/pricing/list/ and https
 
 `--json` writes the same result as JSON, with money in micro-dollars (1 USD = 1,000,000) so nothing is rounded.
 
+## Aan de slag in 5 minuten
+
+Nederlands, kort. De volledige Nederlandse tekst staat in [README.nl.md](README.nl.md).
+
+1. Installeer met `cargo install --locked --path .` (Rust 1.85 of nieuwer).
+2. Sla traces op als OTLP-JSON, bijvoorbeeld met de `file` exporter van de OpenTelemetry Collector.
+3. Draai `otel-span-bill pad/naar/bestand.json`, of geef een map.
+4. Geef met `--scale N` aan dat de bestanden 1/N van een maand zijn, dan toont het rapport de maandrekening.
+5. Lees de kosten als schatting op lijstprijzen, niet als factuur.
+
+## Options
+
+`otel-span-bill [OPTIONS] <PATH>...`
+
+| Option | Meaning |
+|---|---|
+| `<PATH>...` | OTLP-JSON files, or directories (one level deep: `.json`, `.jsonl`, `.ndjson`). |
+| `--json` | Write the result as JSON, with money in micro-dollars. |
+| `--top <N>` | Show only the N biggest services; the totals still cover all. |
+| `--scale <N>` | The files hold 1/N of a month: multiply sizes and counts by N. Default 1. |
+| `--apm-hosts <N>` | Number of Datadog APM hosts. Default: distinct `host.name` / `host.id` in the files, else 1. |
+| `--indexed-percent <P>` | Percent of spans kept as Datadog indexed spans, 0 to 100. Default 0. |
+| `-h`, `--help` / `-V`, `--version` | Print help or the version. |
+
+## Example
+
+A service that sends far more spans than the rest shows up at the top of the table. These are the real options used on the fixture from Quick start; only the first service is shown, and the totals still cover both:
+
+```console
+$ otel-span-bill tests/fixtures/basic.json --top 1
+```
+
+The report lists `checkout` with 3 spans and 2 traces, then the line `... and 1 more services`, then the totals and both estimates. For a monthly figure, add `--scale` as in the last Quick start example, and use `--json` when another program reads the result.
+
 ## How it counts
 
 - The input is OTLP-JSON, the `ExportTraceServiceRequest` shape with `resourceSpans`. A file can hold one document, JSON lines, or several documents one after the other. `snake_case` names and the older `instrumentationLibrarySpans` are read too. [test: one_document, json_lines, pretty_printed_documents_back_to_back, snake_case_document_is_read, legacy_instrumentation_library_spans_are_read]
@@ -137,6 +171,11 @@ Prices read on 2026-11-09 from https://www.datadoghq.com/pricing/list/ and https
 - The same input always gives the same output. [test: output_is_identical_between_runs]
 - It makes no network connection: the only dependencies are `clap` and `serde_json`, and the sources use no socket or HTTP client. [test: the_tool_makes_no_network_connection]
 
+## Exit codes
+
+- `0`: the report was written.
+- `2`: an error: a path that cannot be read, invalid JSON, JSON that is not OTLP trace data, a directory without trace files, or a bad option. The message names the file and goes to stderr; nothing is written on stdout. [test: missing_path_exits_2_and_names_the_path, invalid_json_exits_2_with_file_and_position, directory_without_json_files_exits_2]
+
 ## Limitations
 
 - The sizes are an estimate. Neither Datadog nor Grafana says which byte count it bills, so the OTLP protobuf size is an assumption, and an invoice can differ. [test: the_text_report_says_sizes_are_an_estimate]
@@ -152,7 +191,7 @@ Prices read on 2026-11-09 from https://www.datadoghq.com/pricing/list/ and https
 - There is no OTLP receiver or other network client in 0.1; it reads files. [test: the_tool_makes_no_network_connection]
 - Prices change. They are fixed in the program and dated in the report. Check the pages before you decide anything. [test: the_json_report_names_the_price_sources_and_date]
 
-## Prices
+## Prices and responsibility
 
 Read on 2026-11-09 from the vendor pages. Datadog does not show an update date on these pages, and neither does Grafana.
 
@@ -165,7 +204,13 @@ Read on 2026-11-09 from the vendor pages. Datadog does not show an update date o
 | Grafana Cloud Traces processing | $0.05 per GB | | https://grafana.com/pricing/ and https://grafana.com/docs/grafana-cloud/platform/pricing-and-usage/traces/ |
 | Grafana Cloud Traces write | $0.40 per GB | | https://grafana.com/pricing/ and https://grafana.com/docs/grafana-cloud/platform/pricing-and-usage/traces/ |
 
-Grafana shows these as "Starts at" prices with automatic volume discounts. A test compares this table with the prices in the program.
+Grafana shows these as "Starts at" prices with automatic volume discounts. A test compares this table with the prices in the program. The prices live in `src/prices.rs`; this page does not set them.
+
+The figures are an estimate on list prices, read on the date above. You are responsible for checking the vendor pages and your own contract before you decide anything. The authors give no guarantee that an estimate matches an invoice.
+
+## Maintenance
+
+The prices are fixed in `src/prices.rs` and dated. When a vendor changes a price, update the constants there, the table above and the date together; a test compares them. Report problems and send patches through the repository Issues. See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

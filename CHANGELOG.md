@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Documentation
+
+- Added README.nl.md, QUALITY.nl.md, CONTRIBUTING.md and SECURITY.md.
+- README now has the headings Installation, Aan de slag in 5 minuten, Options, Example, Exit codes, Maintenance and Prices and responsibility.
+- QUALITY.md names the tested commit and the run of 2026-11-24. No change to the program.
+
 ## [0.1.0] - 2026-11-09
 
 First release.
