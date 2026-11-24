@@ -8,8 +8,11 @@ fn root(p: &str) -> String {
     format!("{}/{p}", env!("CARGO_MANIFEST_DIR"))
 }
 
+/// Reads a file with `\r\n` turned into `\n`, so the section search also works on a CRLF checkout.
 fn read(p: &str) -> String {
-    fs::read_to_string(root(p)).unwrap_or_else(|e| panic!("{p}: {e}"))
+    fs::read_to_string(root(p))
+        .unwrap_or_else(|e| panic!("{p}: {e}"))
+        .replace("\r\n", "\n")
 }
 
 /// All Rust sources of the crate: src/ and tests/.
