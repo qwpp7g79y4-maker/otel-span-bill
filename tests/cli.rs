@@ -373,20 +373,25 @@ fn a_service_name_set_as_a_number_is_unknown_service() {
 #[test]
 fn the_tool_makes_no_network_connection() {
     // Only these crates are linked, and neither opens sockets.
+    // `cargo package` rewrites `[dependencies]` into `[dependencies.NAME]` tables, so both
+    // forms are read: a key in the `[dependencies]` table, or a `[dependencies.NAME]` header.
     let cargo =
         std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/Cargo.toml")).unwrap();
-    let deps: Vec<&str> = cargo
-        .split("[dependencies]")
-        .nth(1)
-        .unwrap()
-        .lines()
-        .skip(1)
-        .take_while(|l| !l.starts_with('['))
-        .filter(|l| !l.trim().is_empty())
-        .collect();
-    assert_eq!(deps.len(), 2, "{deps:?}");
-    assert!(deps[0].starts_with("clap"));
-    assert!(deps[1].starts_with("serde_json"));
+    let mut deps: Vec<String> = vec![];
+    let mut in_table = false;
+    for line in cargo.lines().map(str::trim) {
+        if let Some(header) = line.strip_prefix('[') {
+            let header = header.trim_end_matches(']');
+            in_table = header == "dependencies";
+            if let Some(name) = header.strip_prefix("dependencies.") {
+                deps.push(name.to_string());
+            }
+        } else if in_table && !line.is_empty() && !line.starts_with('#') {
+            deps.push(line.split('=').next().unwrap().trim().to_string());
+        }
+    }
+    deps.sort();
+    assert_eq!(deps, ["clap", "serde_json"], "{deps:?}");
     // And the sources do not touch std::net or an HTTP client.
     let mut files = vec![];
     for e in std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/src")).unwrap() {

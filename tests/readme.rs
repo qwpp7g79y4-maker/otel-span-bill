@@ -156,27 +156,97 @@ fn quick_start_examples_match_the_real_output() {
     assert!(checked >= 3, "only {checked} examples checked");
 }
 
+/// Dollars as the README writes them: "$31", "$0.10", "$1.70".
+fn dollars(micro: u64) -> String {
+    let s = format_usd(u128::from(micro));
+    s.strip_suffix(".00").unwrap_or(&s).to_string()
+}
+
+/// A count with thousands separators, as the README writes it: 1,000,000.
+fn grouped(n: u64) -> String {
+    let digits = n.to_string();
+    let mut out = String::new();
+    for (i, c) in digits.chars().enumerate() {
+        if i > 0 && (digits.len() - i) % 3 == 0 {
+            out.push(',');
+        }
+        out.push(c);
+    }
+    out
+}
+
+/// The rows of the price table: the cells of every line below the header and its rule.
+fn price_rows(readme: &str) -> Vec<Vec<String>> {
+    section(readme, "Prices and responsibility")
+        .lines()
+        .filter(|l| l.starts_with('|'))
+        .skip(2)
+        .map(|l| {
+            l.trim()
+                .trim_matches('|')
+                .split('|')
+                .map(|c| c.trim().to_string())
+                .collect()
+        })
+        .collect()
+}
+
 #[test]
 fn readme_price_table_matches_the_constants() {
     let r = read("README.md");
-    let money = |m: u64| format_usd(u128::from(m));
-    for want in [
-        money(DD_APM_HOST_MICRO),
-        format!("${}", "0.10"),
-        format!("${}", "1.70"),
-        money(GC_PLATFORM_FEE_MICRO),
-        "$0.05".to_string(),
-        "$0.40".to_string(),
-        format!("{DD_INCLUDED_GB_PER_HOST} GB"),
-        format!("{GC_INCLUDED_GB} GB"),
-        "1,000,000 indexed spans".to_string(),
-        DATADOG_URL.to_string(),
-        DATADOG_DOCS_URL.to_string(),
-        GRAFANA_URL.to_string(),
-        GRAFANA_DOCS_URL.to_string(),
-        PRICES_READ_ON.to_string(),
-    ] {
-        assert!(r.contains(&want), "README does not contain {want}");
+    assert!(
+        section(&r, "Prices and responsibility").contains(&format!("Read on {PRICES_READ_ON} ")),
+        "the README does not state the date {PRICES_READ_ON}"
+    );
+    let both = |a: &str, b: &str| format!("{a} and {b}");
+    let want: Vec<[String; 4]> = vec![
+        [
+            "Datadog APM host, billed annually".into(),
+            format!("{} per host per month", dollars(DD_APM_HOST_MICRO)),
+            format!(
+                "{DD_INCLUDED_GB_PER_HOST} GB of ingested spans and {} indexed spans per host per month",
+                grouped(DD_INCLUDED_INDEXED_PER_HOST)
+            ),
+            both(DATADOG_URL, DATADOG_DOCS_URL),
+        ],
+        [
+            "Datadog ingested spans above that".into(),
+            format!("{} per GB per month", dollars(DD_INGEST_GB_MICRO)),
+            String::new(),
+            DATADOG_URL.into(),
+        ],
+        [
+            "Datadog indexed spans above that (15-day retention, billed annually)".into(),
+            format!(
+                "{} per million per month",
+                dollars(DD_INDEXED_PER_MILLION_MICRO)
+            ),
+            String::new(),
+            DATADOG_URL.into(),
+        ],
+        [
+            "Grafana Cloud Pro platform fee".into(),
+            format!("{} per month", dollars(GC_PLATFORM_FEE_MICRO)),
+            format!("{GC_INCLUDED_GB} GB per month"),
+            GRAFANA_URL.into(),
+        ],
+        [
+            "Grafana Cloud Traces processing".into(),
+            format!("{} per GB", dollars(GC_PROCESS_GB_MICRO)),
+            String::new(),
+            both(GRAFANA_URL, GRAFANA_DOCS_URL),
+        ],
+        [
+            "Grafana Cloud Traces write".into(),
+            format!("{} per GB", dollars(GC_WRITE_GB_MICRO)),
+            String::new(),
+            both(GRAFANA_URL, GRAFANA_DOCS_URL),
+        ],
+    ];
+    let rows = price_rows(&r);
+    assert_eq!(rows.len(), want.len(), "rows: {rows:?}");
+    for (got, want) in rows.iter().zip(&want) {
+        assert_eq!(got.as_slice(), want.as_slice(), "price table row differs");
     }
     assert_eq!(DD_INGEST_GB_MICRO, 100_000);
     assert_eq!(DD_INDEXED_PER_MILLION_MICRO, 1_700_000);
