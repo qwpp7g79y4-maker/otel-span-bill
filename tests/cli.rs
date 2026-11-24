@@ -414,6 +414,7 @@ fn bin() -> std::process::Command {
     c
 }
 
+#[cfg(unix)]
 fn full() -> std::fs::File {
     std::fs::OpenOptions::new()
         .write(true)
@@ -422,6 +423,7 @@ fn full() -> std::fs::File {
 }
 
 #[test]
+#[cfg(unix)]
 fn a_failed_write_to_stdout_exits_2() {
     let o = bin()
         .arg(BASIC)
@@ -435,6 +437,7 @@ fn a_failed_write_to_stdout_exits_2() {
 }
 
 #[test]
+#[cfg(unix)]
 fn a_failed_write_to_stdout_with_a_full_stderr_exits_2_without_panic() {
     let o = bin()
         .arg(BASIC)
@@ -466,6 +469,7 @@ fn a_closed_stdout_reader_stays_silent_and_exits_0() {
 }
 
 #[test]
+#[cfg(unix)]
 fn a_full_stderr_makes_an_error_exit_2_without_panic() {
     let o = bin()
         .arg("tests/fixtures/does-not-exist.json")
@@ -476,6 +480,7 @@ fn a_full_stderr_makes_an_error_exit_2_without_panic() {
 }
 
 #[test]
+#[cfg(unix)]
 fn a_closed_stderr_makes_an_error_exit_2() {
     let o = std::process::Command::new("sh")
         .arg("-c")
@@ -485,4 +490,51 @@ fn a_closed_stderr_makes_an_error_exit_2() {
         .output()
         .expect("sh runs");
     assert_eq!(o.status.code(), Some(2));
+}
+
+#[cfg(unix)]
+fn hostile_dir(tag: &str) -> std::path::PathBuf {
+    let d = std::env::temp_dir().join(format!("osb-esc-{}-{tag}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&d);
+    std::fs::create_dir_all(&d).unwrap();
+    d
+}
+
+#[cfg(unix)]
+fn assert_plain_one_line(err: &str) {
+    assert!(!err.contains('\u{1b}'), "raw escape: {err:?}");
+    assert_eq!(err.lines().count(), 1, "fake line: {err:?}");
+    assert!(err.starts_with("error: "), "{err:?}");
+    assert!(err.contains("\\u{1b}"), "{err:?}");
+}
+
+#[cfg(unix)]
+#[test]
+fn a_path_with_escape_and_newline_is_escaped_in_a_missing_path_error() {
+    let d = hostile_dir("missing");
+    let p = d.join("nope\u{1b}]0;pwn\nerror: fake");
+    let o = bin().arg(&p).output().expect("binary runs");
+    assert_eq!(o.status.code(), Some(2));
+    assert_plain_one_line(&String::from_utf8_lossy(&o.stderr));
+}
+
+#[cfg(unix)]
+#[test]
+fn a_path_with_escape_and_newline_is_escaped_in_a_file_error() {
+    let d = hostile_dir("file");
+    let p = d.join("evil\u{1b}[31mRED\nerror: fake.json");
+    std::fs::write(&p, "zzz").unwrap();
+    let o = bin().arg(&p).output().expect("binary runs");
+    assert_eq!(o.status.code(), Some(2));
+    assert_plain_one_line(&String::from_utf8_lossy(&o.stderr));
+}
+
+#[cfg(unix)]
+#[test]
+fn a_path_with_escape_and_newline_is_escaped_in_a_directory_error() {
+    let d = hostile_dir("dir");
+    std::fs::write(d.join("a\u{1b}[1;31mFAKE\nerror: fake.json"), "x").unwrap();
+    let o = bin().arg(&d).output().expect("binary runs");
+    assert_eq!(o.status.code(), Some(2));
+    assert_plain_one_line(&String::from_utf8_lossy(&o.stderr));
 }

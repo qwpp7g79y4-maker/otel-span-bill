@@ -13,6 +13,12 @@ pub struct Found {
     pub skipped: usize,
 }
 
+/// A path as shown in an error message: control characters are escaped, so a
+/// file name cannot add a line or a terminal escape to stderr.
+pub fn shown(p: &Path) -> String {
+    crate::render::escape_text(&p.display().to_string())
+}
+
 fn has_trace_extension(p: &Path) -> bool {
     p.extension()
         .and_then(|e| e.to_str())
@@ -28,11 +34,11 @@ pub fn collect_files(paths: &[PathBuf]) -> Result<Found, String> {
     let mut seen = HashSet::new();
     let mut skipped = 0;
     for p in paths {
-        let meta = std::fs::metadata(p).map_err(|e| format!("{}: {e}", p.display()))?;
+        let meta = std::fs::metadata(p).map_err(|e| format!("{}: {e}", shown(p)))?;
         let mut candidates = Vec::new();
         if meta.is_dir() {
             let mut entries: Vec<PathBuf> = std::fs::read_dir(p)
-                .map_err(|e| format!("{}: {e}", p.display()))?
+                .map_err(|e| format!("{}: {e}", shown(p)))?
                 .filter_map(Result::ok)
                 .map(|e| e.path())
                 .filter(|e| e.is_file())

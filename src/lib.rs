@@ -56,11 +56,12 @@ pub fn read_inputs(paths: &[PathBuf]) -> Result<model::Aggregate, String> {
     let mut agg = model::Aggregate::default();
     agg.skipped_files = found.skipped;
     for f in &found.files {
-        let text = std::fs::read_to_string(f).map_err(|e| format!("{}: {e}", f.display()))?;
+        let name = input::shown(f);
+        let text = std::fs::read_to_string(f).map_err(|e| format!("{}: {e}", name))?;
         for (i, doc) in input::documents(&text).enumerate() {
-            let doc = doc.map_err(|e| format!("{}: {e}", f.display()))?;
+            let doc = doc.map_err(|e| format!("{}: {e}", name))?;
             agg.add_document(&doc)
-                .map_err(|e| format!("{}: document {}: {e}", f.display(), i + 1))?;
+                .map_err(|e| format!("{}: document {}: {e}", name, i + 1))?;
         }
         agg.files += 1;
     }
