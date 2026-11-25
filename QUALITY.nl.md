@@ -43,7 +43,7 @@ STAND: groen
 
 Deze meting deed dit niet (not run). Eerdere versies van dit bestand meldden een deel ervan voor oudere commits; voor `5e746f2` is het niet herhaald.
 
-- niet uitgevoerd (not run): `cargo +1.85 test --release` (op 1.85 is alleen het debugprofiel gedraaid)
+- gedraaid op 2026-11-25, Rust 1.85.1: `cargo +1.85 test --release --locked` exit 0; 157 geslaagd, 0 mislukt, 0 genegeerd (90 unit, 52 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 in `src/main.rs`, 0 doctests)
 - niet uitgevoerd (not run): `cargo publish --dry-run`
 - niet uitgevoerd (not run): de vorm `cargo clippy --all-targets -- -D warnings` zonder `--locked` (de pagina van 2026-11-09 gebruikte die; deze meting gebruikte de `--locked`-vorm hierboven)
 - niet uitgevoerd (not run): `cargo deny`, `cargo audit`
