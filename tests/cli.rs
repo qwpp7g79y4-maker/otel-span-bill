@@ -419,7 +419,7 @@ fn bin() -> std::process::Command {
     c
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 fn full() -> std::fs::File {
     std::fs::OpenOptions::new()
         .write(true)
@@ -428,7 +428,7 @@ fn full() -> std::fs::File {
 }
 
 #[test]
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 fn a_failed_write_to_stdout_exits_2() {
     let o = bin()
         .arg(BASIC)
@@ -442,7 +442,7 @@ fn a_failed_write_to_stdout_exits_2() {
 }
 
 #[test]
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 fn a_failed_write_to_stdout_with_a_full_stderr_exits_2_without_panic() {
     let o = bin()
         .arg(BASIC)
@@ -474,7 +474,7 @@ fn a_closed_stdout_reader_stays_silent_and_exits_0() {
 }
 
 #[test]
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 fn a_full_stderr_makes_an_error_exit_2_without_panic() {
     let o = bin()
         .arg("tests/fixtures/does-not-exist.json")
