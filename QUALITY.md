@@ -28,13 +28,21 @@ Run on 2026-11-25 from the root of a clean worktree of commit `5e746f2`, Linux, 
 | `cargo test --locked` | exit 0; 157 passed, 0 failed (90 unit, 52 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 in `src/main.rs`, 0 doc-tests) |
 | `cargo test --release --locked` | exit 0; 157 passed, 0 failed (same split) |
 
+Run also on 2026-11-25 on the same code (`git diff 5e746f2 9e3660d` shows no change in `src/`, `tests/`, `Cargo.toml` or `Cargo.lock`; checked out at `9e3660d`), Linux, Rust 1.85.1 (`rustc 1.85.1 (4eb161250 2025-03-15)`), the minimum supported version:
+
+| Command | Result |
+|---|---|
+| `cargo +1.85 fmt --check` | exit 0 |
+| `cargo +1.85 clippy --all-targets --locked -- -D warnings` | exit 0 |
+| `cargo +1.85 test --locked` | exit 0; 157 passed, 0 failed (90 unit, 52 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 in `src/main.rs`, 0 doc-tests) |
+
 STAND: groen
 
 ### Not run
 
 This measurement did not do these. Earlier pages of this file reported some of them for older commits; they were not repeated for `5e746f2`.
 
-- not run: `cargo +1.85 test` (the minimum supported Rust version)
+- not run: `cargo +1.85 test --release` (only the debug profile was run on 1.85)
 - not run: `cargo publish --dry-run`
 - not run: the form `cargo clippy --all-targets -- -D warnings` without `--locked` (the 2026-11-09 page used it; this measurement used the `--locked` form above)
 - not run: `cargo deny`, `cargo audit`
