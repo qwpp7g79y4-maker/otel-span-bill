@@ -7,74 +7,45 @@ Deze pagina laat zien hoe otel-span-bill is gecontroleerd. Ze beschrijft control
 
 | | |
 |---|---|
-| Geteste commit | `342708bb8a1ce9bcfc069eff1b86e19fcc2511f4` (eerste commit van de reparatie van review B-1 van `otel-eind-47cab85` op 2026-11-24; de documenten daarbovenop zijn de enige latere wijziging) |
+| Geteste commit | `6cb28ffb6bad77080daee60c3005e25e505eac28` (`origin/main` op 2026-11-25; de commit met deze pagina staat direct erboven en wijzigt alleen documenten) |
+| Datum | 2026-11-25 |
 | Tests | 155 geautomatiseerde tests (0 mislukt) |
 
 ### Wat getest wordt
 
 - 90 unittests in `src/` (groottebepaling, tellen, invoer, kosten, weergave, prijzen).
 - 50 tests in `tests/cli.rs` die het programma draaien op de bestanden in `tests/fixtures` en op gegenereerde bestanden: afsluitcodes, opties, foutmeldingen, mappen, JSON-regels, een byte order mark, binaire invoer, een bestand van 20.000 spans, een mislukte schrijfactie op stdout, een volle of gesloten stderr, een gesloten lezer, paden met stuurtekens in foutmeldingen.
-- 5 tests in `tests/size_golden.rs`: de groottebepaling is gelijk aan het aantal bytes van een echte protobuf-encoder.
-- 10 tests in `tests/readme.rs`: elke opdracht in de Quick start van de README wordt uitgevoerd en de uitvoer vergeleken; de koppen, prijzen, URL's en datum in de README komen overeen met het programma; het aantal tests in README en op deze pagina komt overeen met de suite; licenties en changelog zijn aanwezig.
+- 5 tests in `tests/size_golden.rs`: de groottebepaling is gelijk aan het aantal bytes van een echte protobuf-encoder, voor een span met elk soort veld en voor de resource- en scope-koppen.
+- 10 tests in `tests/readme.rs`: elke opdracht in de Quick start van de README wordt uitgevoerd en de uitvoer vergeleken; elke bewering in "How it counts" en "Limitations" noemt tests die bestaan; de prijzen, URL's en datum in de README komen overeen met het programma; het aantal tests in README en op deze pagina komt overeen met de suite; licenties en changelog zijn aanwezig.
 
-### Meting van 2026-11-24 (review B-1 van otel-eind-47cab85)
+### Hoe we controleerden
 
-Reparatie van bevinding B-1 van de eindreview `otel-eind-47cab85`: vijf tests in `tests/readme.rs` faalden als `README.md` CRLF had, omdat ze op `"\n## "` zoeken. N-a tot en met N-f blijven open. Ingebouwde tarieven ongewijzigd. Niets gepusht, geen tag. De GitHub-run is nog steeds niet uitgevoerd.
+Gedraaid op 2026-11-25 vanuit de hoofdmap van een schone worktree van commit `6cb28ff`, Linux, Rust 1.99.0 stable (`rustc 1.99.0 (b940084d7 2026-09-28)`). Aan de boom is niets gewijzigd om deze uitslag te krijgen.
 
-Wijziging (`342708bb8a1ce9bcfc069eff1b86e19fcc2511f4`): `.gitattributes` met `* text=auto eol=lf`, en de testlezer `read()` in `tests/readme.rs` zet `\r\n` om in `\n`, zodat de vijf tests groen blijven als het bestand toch CRLF heeft. `Cargo.toml` sluit `.gitattributes` nog steeds uit van het pakket.
-
-Rood op `47cab85` (een `git archive`-kopie met `README.md` omgezet naar CRLF): `cargo test --locked --offline --test readme` gaf `test result: FAILED. 5 passed; 5 failed`.
-
-Groen op de nieuwe tip `342708bb8a1ce9bcfc069eff1b86e19fcc2511f4` met dezelfde CRLF-`README.md`: `10 passed; 0 failed`. Ook groen op de boom zelf: `cargo test --locked --no-fail-fast -j 2`, `cargo fmt --check` en `cargo clippy --all-targets --locked -- -D warnings`, Linux. De documentencommit erboven wijzigt alleen documenten.
-
-Resultaat: 155 geslaagd, 0 mislukt (90 unittests, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doctests).
-
-Niet gedraaid: Windows, `cargo test --release`, `cargo +1.85 test`, `cargo deny`, `cargo audit`, een GitHub Actions-run.
-
-STAND: groen
-
-### Meting van 2026-11-24 (review B-1 en B-2)
-
-Reparatie van bevindingen B-1 en B-2 van de eindreview `otel-eind-6dc6ccb`. N1 tot en met N7 blijven open. Ingebouwde tarieven ongewijzigd. Niets gepusht, geen tag, geen GitHub Actions-run.
-
-Wijziging (alleen tests, `04ca47690ee893bb9b67b3f2c261bf981615c62c`): `the_tool_makes_no_network_connection` leest de afhankelijkheden in beide vormen, de tabel `[dependencies]` en de tabellen `[dependencies.NAAM]` die `cargo package` schrijft (B-1); `readme_price_table_matches_the_constants` ontleedt de zes rijen van de prijstabel in de README en vergelijkt prijs, inbegrepen hoeveelheid en bron per rij met de constanten (B-2).
-
-Rood op `6dc6ccb` (een `git archive`-kopie, ingepakt met `cargo package --allow-dirty --offline --no-verify` en uitgepakt): `cargo test --locked --test cli the_tool_makes` gaf `0 passed; 1 failed`. B-2: met `$1.80` en `$0.45` in de tabel bleef `cargo test --locked --test readme` op `10 passed; 0 failed`; met de nieuwe test en dezelfde README `9 passed; 1 failed`.
-
-Groen op de tip `04ca47690ee893bb9b67b3f2c261bf981615c62c`: `cargo test --locked --no-fail-fast -j 2` in de bronboom en in het uitgepakte `.crate` van die commit, `cargo fmt --check` (exit 0) en `cargo clippy --all-targets --locked -- -D warnings` (exit 0), Linux. De documentencommit erboven wijzigt alleen documenten.
-
-Resultaat: 155 geslaagd, 0 mislukt (90 unittests, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doctests), in beide bomen.
-
-Niet gedraaid: `cargo test --release`, `cargo +1.85 test`, `cargo deny`, `cargo audit`, een GitHub Actions-run.
-
-STAND: groen
-
-### Meting van 2026-11-24
-
-Opdracht: `cargo test --locked --no-fail-fast -j 2`, vanuit de hoofdmap van de repository, Linux, op de boom van de documentencommit direct boven `9e53b17`. Die commit wijzigt alleen documenten; alle code en tests zijn die van `9e53b17`.
-
-Resultaat: 147 geslaagd, 0 mislukt (90 unittests, 42 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doctests). De broncode is in deze ronde niet gewijzigd.
+| Opdracht | Uitslag |
+|---|---|
+| `cargo fmt --check` | exit 0 |
+| `cargo clippy --all-targets --locked -- -D warnings` | exit 0 |
+| `cargo test --locked` | exit 0; 155 geslaagd, 0 mislukt (90 unit, 50 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 in `src/main.rs`, 0 doctests) |
+| `cargo test --release --locked` | exit 0; 155 geslaagd, 0 mislukt (zelfde verdeling) |
 
 STAND: groen
 
 ### Niet uitgevoerd
 
-- `cargo fmt --check`, `cargo clippy`, `cargo test --release`, `cargo +1.85 test`
-- `cargo deny`, `cargo audit`, een GitHub Actions-run, een release-run
-- `cargo publish --dry-run`
-- fuzzing, property tests en mutation testing
-- er is niets naar GitHub gestuurd
+Deze meting deed dit niet (not run). Eerdere versies van dit bestand meldden een deel ervan voor oudere commits; voor `6cb28ff` is het niet herhaald.
 
-### Meting van 2026-11-24 (reparatieronde)
+- niet uitgevoerd (not run): `cargo +1.85 test` (de minimaal ondersteunde Rust-versie)
+- niet uitgevoerd (not run): `cargo publish --dry-run`
+- niet uitgevoerd (not run): de vorm `cargo clippy --all-targets -- -D warnings` zonder `--locked` (de pagina van 2026-11-09 gebruikte die; deze meting gebruikte de `--locked`-vorm hierboven)
+- niet uitgevoerd (not run): `cargo deny`, `cargo audit`
+- niet uitgevoerd (not run): Windows en macOS, en elke GitHub Actions-run (er is niets gepusht)
+- niet uitgevoerd (not run): fuzzing, property tests, mutation testing
 
-Opdracht: `cargo test --locked --no-fail-fast -j 2`, plus `cargo fmt --check` en `cargo clippy --all-targets --locked -- -D warnings`, vanuit de hoofdmap, Linux, op de boom van de documentencommit direct boven `cf8c5d7d3713b2cabfad1270c984c909c1128946`. Die commit wijzigt alleen documenten.
+### Wat we niet controleerden
 
-Wijziging: een mislukte schrijfactie op stdout (behalve een gesloten lezer) geeft nu exit 2, en een volle of gesloten stderr geeft exit 2 zonder paniek (eerder: exit 0 en exit 101). 5 tests erbij in `tests/cli.rs`; op de oude `src/main.rs` zijn er 3 rood, de andere 2 bewaken gedrag dat al goed was.
+- De schattingen zijn niet vergeleken met een echte Datadog- of Grafana-factuur. De pagina's van de aanbieders zeggen niet welk aantal bytes ze rekenen.
+- Alleen Linux is gebruikt. De tests met `/dev/full` of `sh` worden alleen op Linux gecompileerd, dus de bewering "exit 2 zonder paniek" bij een mislukte stdout en een volle of gesloten stderr is op Windows en macOS niet getest.
+- De ingebouwde tarieven zijn in deze meting niet opnieuw naast de pagina's van de aanbieders gelegd.
 
-Resultaat: 152 geslaagd, 0 mislukt (90 unittests, 47 in `tests/cli.rs`, 10 in `tests/readme.rs`, 5 in `tests/size_golden.rs`, 0 doctests).
-
-STAND: groen
-
-### Eerdere metingen
-
-De meting van 0.1.0 op 2026-11-09 en die van 2026-11-18 staan in [QUALITY.md](QUALITY.md), met de commando's en uitslagen.
+`task.md` en `blueprint.md` zijn lokale werkbestanden: ze blijven buiten git en staan in `.gitignore`.
