@@ -8,7 +8,7 @@ The tests and the measured numbers are in `QUALITY.md`.
 
 [Why](#why) • [Installation](#installation) • [Quick start](#quick-start) • [Aan de slag in 5 minuten](#aan-de-slag-in-5-minuten) • [Options](#options) • [Example](#example) • [How it counts](#how-it-counts) • [Exit codes](#exit-codes) • [Limitations](#limitations) • [Maintenance](#maintenance) • [Prices and responsibility](#prices-and-responsibility) • [License](#license)
 
-otel-span-bill is a command-line tool written in Rust. It reads OpenTelemetry trace data that was saved as OTLP-JSON (for example by the OpenTelemetry Collector `file` exporter), counts spans, traces, and an estimate of the data size per service, and estimates the monthly bill at Datadog APM and Grafana Cloud Traces. It reads files only and opens no network connection. 155 automated tests check it, see [QUALITY.md](QUALITY.md). A Dutch version is in [README.nl.md](README.nl.md).
+otel-span-bill is a command-line tool written in Rust. It reads OpenTelemetry trace data that was saved as OTLP-JSON (for example by the OpenTelemetry Collector `file` exporter), counts spans, traces, and an estimate of the data size per service, and estimates the monthly bill at Datadog APM and Grafana Cloud Traces. It reads files only and opens no network connection. 157 automated tests check it, see [QUALITY.md](QUALITY.md). A Dutch version is in [README.nl.md](README.nl.md).
 
 ## Why
 
