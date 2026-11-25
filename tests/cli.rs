@@ -497,6 +497,35 @@ fn a_closed_stderr_makes_an_error_exit_2() {
     assert_eq!(o.status.code(), Some(2));
 }
 
+#[test]
+#[cfg(target_os = "linux")]
+fn a_closed_stdout_at_the_start_exits_2_with_a_message() {
+    let o = std::process::Command::new("sh")
+        .arg("-c")
+        .arg("exec \"$0\" tests/fixtures/basic.json >&-")
+        .arg(env!("CARGO_BIN_EXE_otel-span-bill"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .expect("sh runs");
+    assert_eq!(o.status.code(), Some(2));
+    let err = String::from_utf8_lossy(&o.stderr);
+    assert!(err.starts_with("error: "), "{err}");
+    assert!(err.contains("stdout"), "{err}");
+}
+
+#[test]
+#[cfg(unix)]
+fn stdout_on_dev_null_still_exits_0() {
+    let o = std::process::Command::new("sh")
+        .arg("-c")
+        .arg("exec \"$0\" tests/fixtures/basic.json >/dev/null")
+        .arg(env!("CARGO_BIN_EXE_otel-span-bill"))
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .expect("sh runs");
+    assert_eq!(o.status.code(), Some(0));
+}
+
 #[cfg(unix)]
 fn hostile_dir(tag: &str) -> std::path::PathBuf {
     let d = std::env::temp_dir().join(format!("osb-esc-{}-{tag}", std::process::id()));
