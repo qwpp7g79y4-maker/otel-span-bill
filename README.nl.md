@@ -64,3 +64,5 @@ De bedragen zijn een schatting op lijstprijzen. Jij bent verantwoordelijk voor h
 ## Licentie
 
 Naar keuze onder [Apache License, Version 2.0](LICENSE-APACHE) of de [MIT-licentie](LICENSE-MIT).
+
+De licenties van de externe crates in het programma staan in [THIRD-PARTY-LICENSES.html](THIRD-PARTY-LICENSES.html).
