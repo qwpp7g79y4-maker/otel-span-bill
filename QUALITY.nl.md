@@ -1,4 +1,4 @@
-pep: 8.6
+pep: 10
 
 <!-- [W·C1·AK] QUALITY.nl.md -->
 # Kwaliteitsrapport

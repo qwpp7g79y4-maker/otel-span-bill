@@ -1,6 +1,6 @@
 # Quality report
 
-pep: 8.6
+pep: 10
 
 This page shows how otel-span-bill was checked. It describes checks we did. It is not a guarantee that the software is free of bugs or that the estimates match an invoice. The Dutch version is [QUALITY.nl.md](QUALITY.nl.md).
 
