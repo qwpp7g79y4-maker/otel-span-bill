@@ -4,7 +4,7 @@ See how many spans each service sends, and what that costs at Datadog APM and Gr
 
 The tests and the measured numbers are in `QUALITY.md`.
 
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license) [![MSRV 1.85](https://img.shields.io/badge/MSRV-1.85-blue.svg)](Cargo.toml)
+[![crates.io](https://img.shields.io/crates/v/otel-span-bill.svg)](https://crates.io/crates/otel-span-bill) [![downloads](https://img.shields.io/crates/d/otel-span-bill.svg)](https://crates.io/crates/otel-span-bill) [![CI](https://github.com/qwpp7g79y4-maker/otel-span-bill/actions/workflows/ci.yml/badge.svg)](https://github.com/qwpp7g79y4-maker/otel-span-bill/actions/workflows/ci.yml) [![PEPAI checked](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fqwpp7g79y4-maker%2Fotel-span-bill%2Fmain%2F.github%2Fbadge.json)](QUALITY.md) [![MSRV 1.85](https://img.shields.io/badge/MSRV-1.85-blue.svg)](https://github.com/qwpp7g79y4-maker/otel-span-bill/blob/main/Cargo.toml) [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](https://github.com/qwpp7g79y4-maker/otel-span-bill#license)
 
 [Why](#why) • [Installation](#installation) • [Quick start](#quick-start) • [Quickstart in 5 minutes](#quickstart-in-5-minutes) • [Options](#options) • [Example](#example) • [How it counts](#how-it-counts) • [Exit codes](#exit-codes) • [Limitations](#limitations) • [Maintenance](#maintenance) • [Prices and responsibility](#prices-and-responsibility) • [License](#license)
 
@@ -212,6 +212,8 @@ The figures are an estimate on list prices, read on the date above. You are resp
 ## Maintenance
 
 The prices are fixed in `src/prices.rs` and dated. When a vendor changes a price, update the constants there, the table above and the date together; a test compares them. Report problems and send patches through the repository Issues. See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+
+After a release the tool is dormant: a new version appears only for a reported bug, a request, or a security problem. Security always comes first.
 
 ## License
 

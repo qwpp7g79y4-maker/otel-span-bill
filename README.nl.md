@@ -1,6 +1,8 @@
 <!-- [W·C1·AK] README.nl.md -->
 # otel-span-bill
 
+[![crates.io](https://img.shields.io/crates/v/otel-span-bill.svg)](https://crates.io/crates/otel-span-bill) [![downloads](https://img.shields.io/crates/d/otel-span-bill.svg)](https://crates.io/crates/otel-span-bill) [![CI](https://github.com/qwpp7g79y4-maker/otel-span-bill/actions/workflows/ci.yml/badge.svg)](https://github.com/qwpp7g79y4-maker/otel-span-bill/actions/workflows/ci.yml) [![PEPAI checked](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fqwpp7g79y4-maker%2Fotel-span-bill%2Fmain%2F.github%2Fbadge.json)](QUALITY.md) [![MSRV 1.85](https://img.shields.io/badge/MSRV-1.85-blue.svg)](https://github.com/qwpp7g79y4-maker/otel-span-bill/blob/main/Cargo.toml) [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](https://github.com/qwpp7g79y4-maker/otel-span-bill#license)
+
 Zie hoeveel spans elke service verstuurt en wat dat kost bij Datadog APM en Grafana Cloud Traces, uit OTLP-JSON-bestanden op je eigen machine. Offline.
 
 De tests en de gemeten aantallen staan in `QUALITY.nl.md`. De Engelse versie is [README.md](README.md).
@@ -54,6 +56,8 @@ Dit geeft de grootste service, `checkout` met 3 spans en 2 traces, de regel `...
 ## Onderhoud
 
 De prijzen staan vast in `src/prices.rs` en hebben een datum. Verandert een leverancier een prijs, pas dan de constanten, de tabel in de README en de datum samen aan; een test vergelijkt ze. Meld problemen en stuur patches via de Issues van de repository. Zie [CONTRIBUTING.md](CONTRIBUTING.md) en [SECURITY.md](SECURITY.md). Wijzigingen staan in [CHANGELOG.md](CHANGELOG.md).
+
+Na een release staat de tool in sluimermodus (dormant): een nieuwe versie komt er alleen bij een gemelde bug, een verzoek of een beveiligingsprobleem. Beveiliging gaat altijd voor.
 
 ## Prijzen en verantwoordelijkheid
 

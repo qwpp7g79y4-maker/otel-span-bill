@@ -2,7 +2,9 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [0.1.0] - 2026-11-09
+
+Changes made after 2026-11-09; the version number did not change.
 
 ### Fixed
 
@@ -17,7 +19,6 @@ All notable changes to this project are documented in this file.
 - README now has the headings Installation, Aan de slag in 5 minuten, Options, Example, Exit codes, Maintenance and Prices and responsibility.
 - QUALITY.md names the tested commit and the run of 2026-11-24. No change to the program.
 
-## [0.1.0] - 2026-11-09
 
 First release.
 
