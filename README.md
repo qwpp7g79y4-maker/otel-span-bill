@@ -16,7 +16,7 @@ Both vendors charge for trace volume (Datadog also per APM host). One chatty ser
 
 ## Installation
 
-Version 0.1.0. Rust 1.85 or newer is needed. From a checkout of this repository:
+Version 0.1.1. Rust 1.85 or newer is needed. From a checkout of this repository:
 
 ```sh
 cargo install --locked --path .

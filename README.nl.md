@@ -11,7 +11,7 @@ otel-span-bill is een opdrachtregelprogramma in Rust. Het leest OpenTelemetry-tr
 
 ## Installatie
 
-Versie 0.1.0. Rust 1.85 of nieuwer is nodig. Vanuit een checkout van deze repository:
+Versie 0.1.1. Rust 1.85 of nieuwer is nodig. Vanuit een checkout van deze repository:
 
 ```sh
 cargo install --locked --path .

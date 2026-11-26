@@ -277,7 +277,7 @@ fn both_licences_are_present_and_cargo_names_them() {
 #[test]
 fn changelog_has_the_release_of_the_crate_version() {
     let c = read("CHANGELOG.md");
-    assert_eq!(env!("CARGO_PKG_VERSION"), "0.1.0");
+    assert_eq!(env!("CARGO_PKG_VERSION"), "0.1.1");
     assert!(c.contains("## [0.1.0]"));
 }
 
