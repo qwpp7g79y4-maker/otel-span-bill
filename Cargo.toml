@@ -10,7 +10,7 @@ repository = "https://github.com/qwpp7g79y4-maker/otel-span-bill"
 readme = "README.md"
 keywords = ["opentelemetry", "otlp", "tracing", "cost", "cli"]
 categories = ["command-line-utilities", "development-tools"]
-exclude = [".github/", ".gitattributes"]
+exclude = [".github/", ".gitattributes", "*-plugin/"]
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

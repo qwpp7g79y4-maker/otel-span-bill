@@ -23,7 +23,7 @@ cargo install --locked --path .
 otel-span-bill --help
 ```
 
-After the first release on crates.io: `cargo install --locked otel-span-bill`.
+From crates.io: `cargo install --locked otel-span-bill`.
 
 ## Quick start
 
