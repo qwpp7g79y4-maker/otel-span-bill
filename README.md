@@ -6,7 +6,7 @@ The tests and the measured numbers are in `QUALITY.md`.
 
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license) [![MSRV 1.85](https://img.shields.io/badge/MSRV-1.85-blue.svg)](Cargo.toml)
 
-[Why](#why) • [Installation](#installation) • [Quick start](#quick-start) • [Aan de slag in 5 minuten](#aan-de-slag-in-5-minuten) • [Options](#options) • [Example](#example) • [How it counts](#how-it-counts) • [Exit codes](#exit-codes) • [Limitations](#limitations) • [Maintenance](#maintenance) • [Prices and responsibility](#prices-and-responsibility) • [License](#license)
+[Why](#why) • [Installation](#installation) • [Quick start](#quick-start) • [Quickstart in 5 minutes](#quickstart-in-5-minutes) • [Options](#options) • [Example](#example) • [How it counts](#how-it-counts) • [Exit codes](#exit-codes) • [Limitations](#limitations) • [Maintenance](#maintenance) • [Prices and responsibility](#prices-and-responsibility) • [License](#license)
 
 otel-span-bill is a command-line tool written in Rust. It reads OpenTelemetry trace data that was saved as OTLP-JSON (for example by the OpenTelemetry Collector `file` exporter), counts spans, traces, and an estimate of the data size per service, and estimates the monthly bill at Datadog APM and Grafana Cloud Traces. It reads files only and opens no network connection. 157 automated tests check it, see [QUALITY.md](QUALITY.md). A Dutch version is in [README.nl.md](README.nl.md).
 
@@ -116,15 +116,15 @@ Prices read on 2026-11-09 from https://www.datadoghq.com/pricing/list/ and https
 
 `--json` writes the same result as JSON, with money in micro-dollars (1 USD = 1,000,000) so nothing is rounded.
 
-## Aan de slag in 5 minuten
+## Quickstart in 5 minutes
 
-Nederlands, kort. De volledige Nederlandse tekst staat in [README.nl.md](README.nl.md).
+Short version. The full Dutch text is in [README.nl.md](README.nl.md).
 
-1. Installeer met `cargo install --locked --path .` (Rust 1.85 of nieuwer).
-2. Sla traces op als OTLP-JSON, bijvoorbeeld met de `file` exporter van de OpenTelemetry Collector.
-3. Draai `otel-span-bill pad/naar/bestand.json`, of geef een map.
-4. Geef met `--scale N` aan dat de bestanden 1/N van een maand zijn, dan toont het rapport de maandrekening.
-5. Lees de kosten als schatting op lijstprijzen, niet als factuur.
+1. Install with `cargo install --locked --path .` (Rust 1.85 or newer).
+2. Save traces as OTLP-JSON, for example with the `file` exporter of the OpenTelemetry Collector.
+3. Run `otel-span-bill path/to/file.json`, or give a folder.
+4. Use `--scale N` to say that the files are 1/N of a month; the report then shows the monthly bill.
+5. Read the cost as an estimate at list prices, not as an invoice.
 
 ## Options
 

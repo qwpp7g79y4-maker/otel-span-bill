@@ -62,7 +62,7 @@ fn readme_has_the_required_sections() {
         "Why",
         "Installation",
         "Quick start",
-        "Aan de slag in 5 minuten",
+        "Quickstart in 5 minutes",
         "Options",
         "Example",
         "How it counts",
