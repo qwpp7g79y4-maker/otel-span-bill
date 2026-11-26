@@ -1,3 +1,5 @@
+pep: 10
+
 <!-- [W·C1·AK] QUALITY.nl.md -->
 # Kwaliteitsrapport
 
